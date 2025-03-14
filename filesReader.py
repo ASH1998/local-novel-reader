@@ -3,6 +3,8 @@ import os
 import json
 import glob
 
+st.set_page_config(layout="wide")
+
 def get_available_series():
     return [d for d in os.listdir('novel_chapters') 
             if os.path.isdir(os.path.join('novel_chapters', d))]
@@ -75,7 +77,13 @@ def main():
     
     current_chapter = st.session_state.current_chapter
     
-    st.sidebar.progress(current_chapter / max(series_progress['max_read'], current_chapter))
+    # Calculate progress based on chapter position
+    current_index = available_chapters.index(current_chapter)
+    total_chapters = len(available_chapters)
+    progress_value = (current_index + 1) / total_chapters
+    progress_text = f"{progress_value:.1%}"
+    
+    st.sidebar.progress(progress_value, text=progress_text)
     st.sidebar.metric("Current Chapter", current_chapter)
     st.sidebar.metric("Last Read Chapter", series_progress['last_read'])
     st.sidebar.metric("Max Read Chapter", series_progress['max_read'])
@@ -111,6 +119,33 @@ def main():
     if chapter_content:
         st.markdown("---")
         st.markdown(chapter_content)
+        
+        # Add bottom navigation buttons
+        st.markdown("---")
+        bcol1, bcol2, bcol3 = st.columns(3)
+        
+        with bcol1:
+            if st.button("Previous Chapter", key="prev_bottom"):
+                try:
+                    current_index = available_chapters.index(current_chapter)
+                    if current_index > 0:
+                        st.session_state.current_chapter = available_chapters[current_index - 1]
+                        st.rerun()
+                except ValueError:
+                    st.error("Chapter not found in sequence")
+        
+        with bcol2:
+            st.write(f"Current Chapter: {current_chapter}")
+        
+        with bcol3:
+            if st.button("Next Chapter", key="next_bottom"):
+                try:
+                    current_index = available_chapters.index(current_chapter)
+                    if current_index < len(available_chapters) - 1:
+                        st.session_state.current_chapter = available_chapters[current_index + 1]
+                        st.rerun()
+                except ValueError:
+                    st.error("Chapter not found in sequence")
         
         # Update progress immediately when chapter is found
         series_progress['last_read'] = current_chapter
