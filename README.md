@@ -10,6 +10,10 @@ A simple, streamlined web application for reading novels locally on your compute
 - Automatic progress saving
 - Progress visualization with completion percentage
 - Responsive layout that works on various screen sizes
+- Download/Translate chapters from https://www.fortuneeternal.com/
+
+## Screenshot
+![Screenshot](static/image.png)
 
 ## Prerequisites
 
@@ -40,13 +44,22 @@ novel_chapters/
         chapter_3.txt
         ...
 ```
+If you dont have the series and you want to download/translate check step 2
 
-2. Run the application:
+2. Find the Novel you want to translate
+
+```bash
+novel_scraper.py "<Series Name>" 1 10 --instructions-file novels\samplePrompt.txt
+```
+
+3. Run the application:
 ```bash
 streamlit run filesReader.py
 ```
 
-3. Access the application in your web browser (typically at http://localhost:8501)
+4. Access the application in your web browser (typically at http://localhost:8501)
+
+5. You can read while the novel scraper is downloading content.
 
 ## Reading Progress
 
