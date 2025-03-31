@@ -32,7 +32,7 @@ def generate_url(series_name, chapter):
     base_url = "https://www.fortuneeternal.com/novel"
     return f"{base_url}/{series_name}/chapter-{chapter}/"
 
-def scrape_chapters(series_name, start_chapter, end_chapter):
+def scrape_chapters(series_name, start_chapter, end_chapter, instructions_file='novels/raon_instructions.txt'):
     # Create folder if it doesn't exist
     folder_path = f'novel_chapters/{series_name}'
     os.makedirs(folder_path, exist_ok=True)
@@ -90,7 +90,7 @@ def scrape_chapters(series_name, start_chapter, end_chapter):
                     
                     # Translate the text
                     try:
-                        translated_text = generate(formatted_text)
+                        translated_text = generate(formatted_text, instructions_file=instructions_file)
                         translator_limiter.add_call()
                     except Exception as e:
                         print(f"\nTranslation error for chapter {chapter}: {str(e)}")
@@ -126,12 +126,16 @@ def main():
     parser.add_argument('series_name', help='Name of the novel series')
     parser.add_argument('start_chapter', type=int, help='Starting chapter number')
     parser.add_argument('end_chapter', type=int, help='Ending chapter number')
+    parser.add_argument('--instructions-file', default='novels/raon_instructions.txt',
+                      help='Path to the instructions file for the translator')
     
     args = parser.parse_args()
-    scrape_chapters(args.series_name, args.start_chapter, args.end_chapter)
+    scrape_chapters(args.series_name, args.start_chapter, args.end_chapter, 
+                   instructions_file=args.instructions_file)
 
 if __name__ == "__main__":
     main()
 
 
-# novel_scraper.py "the-reincarnated-assassin-is-a-genius-swordsman-raw" 653 660
+# novel_scraper.py "the-reincarnated-assassin-is-a-genius-swordsman-raw" 801 900 --instructions-file novels/raon_instructions.txt
+# novel_scraper.py "absolute-dominion-raw-novel" 1 10 --instructions-file novels/absoluteDominion.txt
